@@ -1,11 +1,16 @@
 <ion-view title="Image">
  <ion-content ng-controller="ExampleController">
     <img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
-    <img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
+    <img ng-show="imgURI === undefined" ng-src="http://placehold.it/140x100">
     <button class="button" ng-click="takePicture()">Take Picture</button>
     <p>You wrote: {{posts}} </p>
     Enter resturant: <input type="text" ng-model="resturant"><br>
-    <button class="button" ng-click="callNutritionAPI()">Get Calories</button>
+    <button class="button" ng-click="runServices()">Run</button> <br>
+ 	{{id}} <br>
+    {{brand_name}} <br>
+    {{item_name}} <br>
+    {{nf_calories}} <br>
+    {{nf_total_fat}} <br>
 
 </ion-content> 
 </ion-view>

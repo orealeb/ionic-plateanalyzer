@@ -1,34 +1,34 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {
-})
+.controller('DashCtrl', function($scope) {})
 
 .controller('FriendsCtrl', function($scope, Friends) {
-  $scope.friends = Friends.all();
+    $scope.friends = Friends.all();
 })
 
 .controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
-  $scope.friend = Friends.get($stateParams.friendId);
+    $scope.friend = Friends.get($stateParams.friendId);
 })
 
-.controller('AccountCtrl', function($scope) {
-})
+.controller('AccountCtrl', function($scope) {})
 
-.controller("ExampleController", function($scope, $cordovaCamera, $http, myService, myService2, $timeout, $interval) {
-  //$scope.resturant = '';
+.controller("ExampleController", function($scope, $cordovaCamera, $http, camFindTokenService, camFindResultService, nutritionixDataService, $timeout, $interval) {
+    $scope.resturant = 'KFC';
+
+
     $scope.takePicture = function() {
-        var options = { 
-            quality : 75, 
-            destinationType : Camera.DestinationType.DATA_URL, 
-            sourceType : Camera.PictureSourceType.CAMERA, 
-            allowEdit : true,
+        var options = {
+            quality: 75,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            allowEdit: true,
             encodingType: Camera.EncodingType.JPEG,
             targetWidth: 300,
             targetHeight: 300,
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
         };
- 
+
         $cordovaCamera.getPicture(options).then(function(imageData) {
             $scope.imgURI = "data:image/jpeg;base64," + imageData;
         }, function(err) {
@@ -37,112 +37,99 @@ angular.module('starter.controllers', [])
     }
 
 
-var token = ' ';
-
-    
-var food ='undefined';
+    //var token = ' ';
 
 
- var myDataPromise = myService2.getData();
-    myDataPromise.then(function(result) {  // this is only run after $http completes
-             console.log("result name "+result);
+    //var food = 'undefined';
 
-       token= result;
+    //var nutriondetails = ' ';
+
+$scope.runServices = function () {
+  
+
+   var myDataPromise = camFindTokenService.getData();
+
+    myDataPromise.then(function(result) { // this is only run after $http completes
+        console.log("result name " + result);
+
+        $scope.token = result;
 
 
-     //var count = 0;   
-    mytick = function tick() {
-         food = dataPromise(token);
-        //$scope.posts = food;
-          if(food == 'undefined'){
-        $timeout(tick, 5000);
-        console.log(food);
-      //$scope.posts = food;
-    
-    }
-    };//)();
-    $timeout(mytick, 5000);
- 
-        //$interval(dataPromise(token), 50);
-        //$interval.flush();
+        mytick = function tick() {
+            food = camFindResultPromise($scope.token);
 
-/**var timer = $timeout( dataPromise(token), 5000 );
+            if ($scope.food === undefined) {
+                $timeout(tick, 5000);
+                console.log($scope.food + ' is undefined');
+            }
+            else
+            {      console.log($scope.food + ' not undefined');
+                  return 'exit function';
+            }
+        };
+        $timeout(mytick, 5000);
 
-timer.then( function( result ) {
-  console.log(result);
-  if ( result != 'undefined' ) {
-  $timeout.cancel(timer)  } 
-  else {
-    // handle the error
-  }
-});**/
-
-               // Simple GET request example :
-
-       //console.log("data.name"+$scope.data.name);
     });
 
-dataPromise = function(token) {
-      
-  console.log(token);
 
-    var myDataPromise = myService.getData(token);
+camFindResultPromise = function(token) {
 
-    myDataPromise.then(function(result) {  // this is only run after $http completes
-             console.log("result name "+result);
+        console.log($scope.token);
 
-       food= result;
+        var myDataPromise = camFindResultService.getData($scope.token = token);
 
+        myDataPromise.then(function(result) { // this is only run after $http completes
+            console.log("result name " + result);
 
-   
-           //console.log("data.name"+$scope.data.name);
-      
-
+            $scope.food = result;
+            if(result !== undefined)
+            {
+              console.log(result);
+              //$alert('food is not underfine')
+              $scope.food = $scope.food.replace(' ', '%20');
+              nutritionixResultPromise($scope.food, $scope.resturant);
+              return 'end function';
+            }
 
         });
 
-    return food;
+        return $scope.food;
+   }
 
-//return food;
+ nutritionixResultPromise = function(food,resturant) {
+    var myDataPromise = nutritionixDataService.getData($scope.food = food,$scope.resturant = resturant);
 
+        myDataPromise.then(function(result) { // this is only run after $http completes
+            //console.log("result name " + result);
 
+            $scope.id = result.data.hits[0]._id;
+            $scope.brand_name = result.data.hits[0].fields.brand_name;
+            $scope.item_name =result.data.hits[0].fields.item_name;
+            $scope.nf_calories =result.data.hits[0].fields.nf_calories;
+            $scope.nf_total_fat =result.data.hits[0].fields.nf_total_fat;
+            console.log(result);
+            console.log("result data " +result.data);
+            console.log("result data " +result.data.hits[0]._id);
+            console.log("result data " +result.data.hits[0].fields.brand_name);
+            console.log("result data " +result.data.hits[0].fields.item_name);
+            console.log("result data " +result.data.hits[0].fields.nf_calories);
+            console.log("result data " +result.data.hits[0].fields.nf_total_fat);
+        //$scope.$apply();
+            //food = result;
+            //food = food.replace(' ', '%20');
 
+        });
+      }
 
 }
 
-    $scope.callNutritionAPI = function (food, resturant) {
- if(food != 'undefined'){
-                      //food = food.replace(' ', '%20');
 
-                   // Simple GET request example :
-      $http.get('https://api.nutritionix.com/v1_1/search/'+resturant+"%20"+food+'?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=80fbbce8&appKey=f00f0559be1828bf7113ee64afcfa9f6').
-      success(function(data, status, headers, config) {
-        console.log(data);
-         //$scope.$apply(function function_name () {
-                              //food = food.replace('%20', ' ');
 
-        $scope.posts = food;      
-        //console.log("In stuff" + food)});
-        // this callback will be called asynchronously
-        // when the response is available
-      }).
-      error(function(data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
-      });
-    }}
- 
+   
+
+
+    
 
 
 
-//$scope.posts = food;
-
-
-
-
-
-
- 
 });
-
-

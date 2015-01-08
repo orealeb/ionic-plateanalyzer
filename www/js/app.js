@@ -37,7 +37,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
       views: {
         'tab-dash': {
           templateUrl: 'tab-dash.html',
-          controller: 'DashCtrl'
+          controller: 'ExampleController'
         }
       }
     })
@@ -47,7 +47,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
       views: {
         'tab-friends': {
           templateUrl: 'tab-friends.html',
-          controller: 'FriendsCtrl'
+          controller: 'ExampleController'
         }
       }
     })
